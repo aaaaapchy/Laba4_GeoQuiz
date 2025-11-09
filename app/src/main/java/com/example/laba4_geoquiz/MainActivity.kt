@@ -1,6 +1,8 @@
 package com.example.laba4_geoquiz
 
+import android.R.attr.enabled
 import android.os.Bundle
+import android.util.MutableFloat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +21,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.internal.isLiveLiteralsEnabled
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.laba4_geoquiz.ui.theme.Laba4_GeoQuizTheme
+
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,31 +76,45 @@ fun MainScreen(modifier: Modifier = Modifier) {
             listOf("The Amazon River is the longest river in the Americas.", true),
             listOf("Lake Baikal is the world's oldest and deepest freshwater lake.", true)
         )
-        quiz.forEach { Text(text = "${it}") }
 
+        val quizcount = remember { mutableStateOf(0) }
+        val goodanswer = remember { mutableStateOf(0) }
+        var flag = true
+        val enabled = remember { mutableStateOf(true) }
 
         Row(shapeModifier.fillMaxWidth().height(75.dp).padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(text = "GeoQuiz", fontSize = 30.sp, color = Color(0xffffffff))
         }
         Row (modifier.fillMaxWidth().padding(25.dp), horizontalArrangement = Arrangement.Center){
-            Text("Вопрос", fontSize = 18.sp, color = Color(0xff7e7e7e))
+            Text("${quiz[quizcount.value][0]}", fontSize = 18.sp, color = Color(0xff7e7e7e))
         }
         Row (modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween){
-            Button(onClick = {},
+            Button(onClick = {val flag = true
+                            if (flag == quiz[quizcount.value][1]){
+                            goodanswer.value++}
+                            enabled.value = false
+            }, enabled = enabled.value,
                 shape = RoundedCornerShape(10.dp),
                 ) { Text("True", fontSize = 20.sp)}
-            Button(onClick = {},
+            Button(onClick = {val flag = false
+                if (flag == quiz[quizcount.value][1]){
+                    goodanswer.value++}
+                enabled.value = false}, enabled = enabled.value,
                 shape = RoundedCornerShape(10.dp)) { Text("False", fontSize = 20.sp)}
         }
         Row(modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.End){
-            Button(onClick ={}, shape = RoundedCornerShape(10.dp)) {
+            Button(onClick ={quizcount.value++
+                enabled.value = true}, shape = RoundedCornerShape(10.dp)) {
                 Text(text = "Next >", fontSize = 20.sp)
             }
         }
-
+        Row {
+            Text("Количество верных ответов: ${goodanswer.value}")
+        }
     }
 
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
