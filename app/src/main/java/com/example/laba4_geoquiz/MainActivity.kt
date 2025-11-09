@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -81,6 +82,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
         val goodanswer = remember { mutableStateOf(0) }
         var flag = true
         val enabled = remember { mutableStateOf(true) }
+        val enablednext = remember { mutableStateOf(true) }
+        val openDialog = remember { mutableStateOf(false) }
+        if (quizcount.value == quiz.size-1) {
+            enablednext.value=false
+        }
 
         Row(shapeModifier.fillMaxWidth().height(75.dp).padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(text = "GeoQuiz", fontSize = 30.sp, color = Color(0xffffffff))
@@ -93,24 +99,60 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             if (flag == quiz[quizcount.value][1]){
                             goodanswer.value++}
                             enabled.value = false
+                if (quizcount.value == quiz.size-1) {
+                    openDialog.value=true
+                }
+
             }, enabled = enabled.value,
                 shape = RoundedCornerShape(10.dp),
                 ) { Text("True", fontSize = 20.sp)}
             Button(onClick = {val flag = false
                 if (flag == quiz[quizcount.value][1]){
                     goodanswer.value++}
+                if (quizcount.value == quiz.size-1) {
+                    openDialog.value=true
+                }
                 enabled.value = false}, enabled = enabled.value,
                 shape = RoundedCornerShape(10.dp)) { Text("False", fontSize = 20.sp)}
         }
         Row(modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.End){
-            Button(onClick ={quizcount.value++
-                enabled.value = true}, shape = RoundedCornerShape(10.dp)) {
+            Button(onClick ={
+
+                    quizcount.value++
+                    enabled.value = true
+                
+                enabled.value = true},enabled = enablednext.value, shape = RoundedCornerShape(10.dp)) {
                 Text(text = "Next >", fontSize = 20.sp)
             }
         }
-        Row {
-            Text("Количество верных ответов: ${goodanswer.value}")
+
+
+
+        if(quizcount.value == quiz.size){
+            openDialog.value=true
         }
+        if(openDialog.value){
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text(text = "Викторина пройдена!") },
+                text = { Text(text="Количество правильных ответов: ${goodanswer.value}/6", color = Color(0xff7e7e7e))},
+                confirmButton = {
+                    Button({
+                        openDialog.value = false
+                        quizcount.value = 0
+                        goodanswer.value = 0
+                        flag = true
+                        enabled.value = true
+                        enablednext.value = true
+                        openDialog.value = false
+
+                    }) {
+                        Text("Пройти заново", fontSize = 22.sp)
+                    }
+                }
+            )
+        }
+
     }
 
 }
