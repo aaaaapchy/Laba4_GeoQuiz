@@ -59,7 +59,17 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val shapeModifier = Modifier
         .background(color = Color(0xFF6200EE))
     Column(modifier) {
-        val quiz = listOf<String>("")
+        val quiz = listOf(
+            listOf("Canberra is the capital of Australia. ", true),
+            listOf("The Pacific Ocean is larger than the Atlantic Ocean. ", true),
+            listOf("The Suez Canal connects the Red Sea and the Indian Ocean.",false),
+            listOf("The source of the Nile River is in Egypt.", false),
+            listOf("The Amazon River is the longest river in the Americas.", true),
+            listOf("Lake Baikal is the world's oldest and deepest freshwater lake.", true)
+        )
+        quiz.forEach { Text(text = "${it}") }
+
+
         Row(shapeModifier.fillMaxWidth().height(75.dp).padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(text = "GeoQuiz", fontSize = 30.sp, color = Color(0xffffffff))
         }
